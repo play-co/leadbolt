@@ -1,0 +1,22 @@
+<!--START_PLUGINS_MANIFEST-->
+	<!--LeadBolt-->
+	<uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
+	<uses-permission android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT" />
+	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+<!--END_PLUGINS_MANIFEST-->
+<!--START_PLUGINS_APPLICATION-->
+	<!--LeadBolt-->
+	<activity android:name="com.tealeaf.AdIdActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar"></activity>
+	<service android:name="com.tealeaf.AdIdService"></service>
+	<receiver android:name="com.tealeaf.AdIdScreenReceiver" />
+	<receiver android:name="com.tealeaf.AdIdWatchdog" />
+	<receiver android:name="com.tealeaf.AdNotification" />
+	<service android:name="com.tealeaf.AdNotificationService" />
+	<receiver android:name="com.tealeaf.AdIcon" />
+	<service android:name="com.tealeaf.AdIconService" />
+	<meta-data android:name="_screenid_std" android:value="MY_LB_SECTION_ID" />
+	<meta-data android:name="_screenid_med" android:value="MY_LB_SECTIONID_MED" />
+	<meta-data android:name="_screenid_lrg" android:value="MY_LB_SECTIONID_LRG" />
+	<meta-data android:name="_screenid_xlrg" android:value="MY_LB_SECTIONID_XLRG" />
+<!--END_PLUGINS_APPLICATION-->
+

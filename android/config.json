@@ -1,0 +1,12 @@
+{
+		"copyFiles": [
+			"LeadBoltPlugin.java"
+		],
+		"libraries": [
+		],
+		"jars": [
+			"./leadbolt.jar"
+		],
+		"injectionXML": "manifest.xml",
+		"injectionXSL": "manifest.xsl"
+}
