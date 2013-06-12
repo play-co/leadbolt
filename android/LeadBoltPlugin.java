@@ -26,12 +26,12 @@ import android.util.Log;
 import com.tealeaf.EventQueue;
 import com.tealeaf.event.*;
 
-import com.tealeaf.AdController;
+//import com.tealeaf.AdController;
 
 public class LeadBoltPlugin implements IPlugin {
 	Context _ctx;
 
-	private AdController myController;
+	private Object myController;
 
 	public LeadBoltPlugin() {
 	}
@@ -43,8 +43,26 @@ public class LeadBoltPlugin implements IPlugin {
 	public void onCreate(Activity activity, Bundle savedInstanceState) {
 		logger.log("{leadbolt} Installing LeadBolt ad framework");
 
-		myController = new AdController(activity, "MY_LB_SECTION_ID");
-		myController.loadStartAd("MY_LB_NOTIFICATION_ID", "MY_LB_ICON_ID");
+		try {
+			Class cls = Class.forName("com.qcbcfhovhver.AdController");
+			if (cls != null) {
+				Object obj = cls.newInstance();
+				if (obj != null) {
+					logger.log("{leadbolt} Created object");
+					myController = obj;
+				} else {
+					logger.log("{leadbolt} Unable to create class");
+				}
+			} else {
+				logger.log("{leadbolt} Unable to find class");
+			}
+		} catch (Exception e) {
+			logger.log("{leadbolt} Unable to find class");
+			e.printStackTrace();
+		}
+
+		//myController = new AdController(activity, "MY_LB_SECTION_ID");
+		//myController.loadStartAd("MY_LB_NOTIFICATION_ID", "MY_LB_ICON_ID");
 	}
 
 	public void onResume() {
@@ -60,7 +78,7 @@ public class LeadBoltPlugin implements IPlugin {
 	}
 
 	public void onDestroy() {
-		myController.destroyAd();
+		//myController.destroyAd();
 	}
 
 	public void onNewIntent(Intent intent) {
