@@ -1,5 +1,9 @@
 # Game Closure DevKit Plugin: LeadBolt
 
+LeadBolt support is still in progress.  In the meantime you can use this plugin as
+a starting point in case you want to integrate it yourself.  Right now only the
+Android platform is working and only for analytics it does not show advertising.
+
 ## Usage
 
 Install the plugin with `basil install leadbolt`.
