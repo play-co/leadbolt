@@ -94,7 +94,7 @@ public class LeadBoltPlugin implements IPlugin {
 	}
 
 	public boolean consumeOnBackPressed() {
-		return false;
+		return true;
 	}
 
 	public void onBackPressed() {
