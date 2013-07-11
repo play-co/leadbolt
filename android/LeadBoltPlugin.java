@@ -43,8 +43,19 @@ public class LeadBoltPlugin implements IPlugin {
 	public void onCreate(Activity activity, Bundle savedInstanceState) {
 		logger.log("{leadbolt} Installing LeadBolt ad framework");
 
+		PackageManager manager = activity.getPackageManager();
+		String leadBoltPackage = "";
 		try {
-			Class cls = Class.forName("com.qcbcfhovhver.AdController");
+			Bundle meta = manager.getApplicationInfo(activity.getPackageName(), PackageManager.GET_META_DATA).metaData;
+			if (meta != null) {
+				leadBoltPackage = meta.getString("LEADBOLT_PACKAGE");
+			}
+		} catch (Exception e) {
+			android.util.Log.d("EXCEPTION", "" + e.getMessage());
+		}
+
+		try {
+			Class cls = Class.forName(leadBoltPackage + ".AdController");
 			if (cls != null) {
 				Object obj = cls.newInstance();
 				if (obj != null) {
