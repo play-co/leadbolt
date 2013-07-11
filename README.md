@@ -43,7 +43,7 @@ JAR download link.
 			"72": "resources/images/promo/icon72.png",
 			"96": "resources/images/promo/icon96.png"
 		},
-		"LeadBoltPackage": "com.qcbcfhovhver"
+		"leadBoltPackage": "com.qcbcfhovhver"
 	},
 ~~~
 
