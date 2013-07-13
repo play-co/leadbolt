@@ -6,23 +6,11 @@ Android platform is working and only for analytics it does not show advertising.
 
 ## Usage
 
+Create a publisher account with LeadBolt and create a new application.  Download the SDK JAR file and rename it to `leadbolt.jar` and put it in your game's root folder next to your `manifest.json` file.
+
 Install the plugin with `basil install leadbolt`.
 
-Download your game's LeadBolt .jar file and drop it into the devkit/addons/leadbolt/android directory as "leadbolt.jar", as in this example:
-
-~~~
-├── README.md
-├── android
-│   ├── LeadBoltPlugin.java
-│   ├── config.json
-│   ├── leadbolt.jar  <-- Insert your JAR file here
-│   ├── manifest.xml
-│   └── manifest.xsl
-└── ios
-    └── config.json
-~~~
-
-Include it in the `manifest.json` file under the "addons" section for your game:
+Include the plugin in the `manifest.json` file under the "addons" section for your game:
 
 ~~~
 "addons": [
@@ -48,4 +36,3 @@ JAR download link.
 ~~~
 
 You can test for successful integration on the LeadBolt website.
-
