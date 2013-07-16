@@ -31,8 +31,36 @@ JAR download link.
 			"72": "resources/images/promo/icon72.png",
 			"96": "resources/images/promo/icon96.png"
 		},
-		"leadBoltPackage": "com.qcbcfhovhver"
+		"leadBoltPackage": "com.qcbcfhovhver",
+		"leadBoltSectionId": "227037220"
+	},
+~~~
+
+~~~
+	"ios": {
+		"bundleID": "mmp",
+		"appleID": "568975017",
+		"version": "1.0.3",
+		"icons": {
+			"57": "resources/images/promo/icon57.png",
+			"72": "resources/images/promo/icon72.png",
+			"114": "resources/images/promo/icon114.png",
+			"144": "resources/images/promo/icon144.png"
+		},
+		"leadBoltSectionId": "227037220"
 	},
 ~~~
 
 You can test for successful integration on the LeadBolt website.
+
+Then you can edit your game JavaScript code to import the LeadBolt object:
+
+~~~
+import plugins.leadbolt.leadBolt as leadBolt;
+~~~
+
+And use the `showInterstitial` method to show an ad:
+
+~~~
+leadBolt.showInterstitial();
+~~~

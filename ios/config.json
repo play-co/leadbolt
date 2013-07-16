@@ -1,6 +1,15 @@
 {
 	"code": [
+		"LeadBoltOverlay.h",
+		"LeadBoltPlugin.h",
+		"LeadBoltPlugin.mm"
 	],
 	"frameworks": [
+		"AdSupport",
+		"CoreLocation",
+		"CoreTelephony",
+		"AudioToolbox",
+		"AVFoundation",
+		"libLeadboltOverlay.a"
 	]
 }
