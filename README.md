@@ -1,8 +1,6 @@
 # Game Closure DevKit Plugin: LeadBolt
 
-LeadBolt support is still in progress.  In the meantime you can use this plugin as
-a starting point in case you want to integrate it yourself.  Right now only the
-Android platform is working and only for analytics it does not show advertising.
+This plugin adds support for [LeadBolt](http://www.leadbolt.com/) interstitial advertising on Android and iOS platforms.
 
 ## Usage
 
@@ -51,7 +49,7 @@ JAR download link.
 	},
 ~~~
 
-You can test for successful integration on the LeadBolt website.
+You can test for successful integration on the [LeadBolt website](http://www.leadbolt.com/).
 
 Then you can edit your game JavaScript code to import the LeadBolt object:
 
