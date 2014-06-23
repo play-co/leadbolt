@@ -1,7 +1,4 @@
 {
-	"copyGameFiles": [
-		"leadbolt.jar"
-	],
 	"copyFiles": [
 		"LeadBoltPlugin.java"
 	],
