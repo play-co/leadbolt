@@ -1,23 +1,10 @@
 <!--START_PLUGINS_MANIFEST-->
 	<!--LeadBolt-->
-	<uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
-	<uses-permission android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT" />
-	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+	<uses-permission android:name="android.permission.INTERNET"/>
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 <!--END_PLUGINS_MANIFEST-->
 <!--START_PLUGINS_APPLICATION-->
 	<!--LeadBolt-->
 	<meta-data android:name="LEADBOLT_PACKAGE" android:value="" />
-	<activity android:name="COM.PACKAGE.AdIdActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar"></activity>
-	<service android:name="COM.PACKAGE.AdIdService"></service>
-	<receiver android:name="COM.PACKAGE.AdIdScreenReceiver" />
-	<receiver android:name="COM.PACKAGE.AdIdWatchdog" />
-	<receiver android:name="COM.PACKAGE.AdNotification" />
-	<service android:name="COM.PACKAGE.AdNotificationService" />
-	<receiver android:name="COM.PACKAGE.AdIcon" />
-	<service android:name="COM.PACKAGE.AdIconService" />
-	<meta-data android:name="_screenid_std" android:value="MY_LB_SECTION_ID" />
-	<meta-data android:name="_screenid_med" android:value="MY_LB_SECTIONID_MED" />
-	<meta-data android:name="_screenid_lrg" android:value="MY_LB_SECTIONID_LRG" />
-	<meta-data android:name="_screenid_xlrg" android:value="MY_LB_SECTIONID_XLRG" />
 <!--END_PLUGINS_APPLICATION-->
 

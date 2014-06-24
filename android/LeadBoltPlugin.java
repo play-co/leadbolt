@@ -56,17 +56,20 @@ public class LeadBoltPlugin implements IPlugin {
 	}
 
 	private class PluginDelegate implements AdListener {
+
 		@Override
 		public void onAdLoaded() {
 		}
 
 		@Override
 		public void onAdClicked() {
+			logger.log("{leadbolt-native} ad clicked");
 			EventQueue.pushEvent(new LeadboltAdDismissed());
 		}
 
 		@Override
 		public void onAdClosed() {
+			logger.log("{leadbolt-native} ad closed");
 			EventQueue.pushEvent(new LeadboltAdDismissed());
 		}
 
@@ -76,6 +79,7 @@ public class LeadBoltPlugin implements IPlugin {
 
 		@Override
 		public void onAdFailed() {
+			logger.log("{leadbolt-native} ad not available");
 			EventQueue.pushEvent(new LeadboltAdNotAvailable());
 		}
 
@@ -97,6 +101,7 @@ public class LeadBoltPlugin implements IPlugin {
 
 		@Override
 		public void onAdCached() {
+			logger.log("{leadbolt-native} available");
 			EventQueue.pushEvent(new LeadboltAdAvailable());
 		}
 	}
@@ -116,8 +121,6 @@ public class LeadBoltPlugin implements IPlugin {
 		logger.log("{leadbolt} Initializing LeadBolt ad framework with package:", leadBoltPackage);
 
 		this.ad = new AdController(mActivity, "MY_LB_SECTION_ID", new PluginDelegate());
-		//myController = new AdController(activity, "MY_LB_SECTION_ID");
-		//myController.loadStartAd("MY_LB_NOTIFICATION_ID", "MY_LB_ICON_ID");
 	}
 
 	public void showInterstitial(String jsonData) {
