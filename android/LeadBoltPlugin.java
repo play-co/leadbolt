@@ -64,7 +64,6 @@ public class LeadBoltPlugin implements IPlugin {
 		@Override
 		public void onAdClicked() {
 			logger.log("{leadbolt-native} ad clicked");
-			EventQueue.pushEvent(new LeadboltAdDismissed());
 		}
 
 		@Override
@@ -115,16 +114,31 @@ public class LeadBoltPlugin implements IPlugin {
 
 	public void onCreate(Activity activity, Bundle savedInstanceState) {
 		mActivity = activity;
-
 		String leadBoltPackage = "LEADBOLT_PACKAGE";
+		PackageManager manager = activity.getPackageManager();
+		String sectionId = "";
 
-		logger.log("{leadbolt} Initializing LeadBolt ad framework with package:", leadBoltPackage);
+		try {
+			Bundle meta = manager.getApplicationInfo(activity.getPackageName(), PackageManager.GET_META_DATA).metaData;
+			if (meta != null) {
+				sectionId = meta.get("LEADBOLT_SECTION_ID").toString();
+			}
+		} catch (Exception e) {
+			android.util.Log.d("EXCEPTION", "" + e.getMessage());
+		}
 
-		this.ad = new AdController(mActivity, "MY_LB_SECTION_ID", new PluginDelegate());
+		logger.log("{leadbolt} Initializing LeadBolt ad framework with package:", leadBoltPackage, sectionId);
+
+		this.ad = new AdController(mActivity, sectionId, new PluginDelegate());
 	}
 
 	public void showInterstitial(String jsonData) {
-		this.ad.loadAd();
+		final AdController ad = this.ad;
+		mActivity.runOnUiThread(new Runnable() {
+			public void run() {
+				ad.loadAd();
+			}
+		});
 	}
 
 	public void cacheInterstitial(String jsonData) {

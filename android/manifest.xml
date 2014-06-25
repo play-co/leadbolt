@@ -6,5 +6,6 @@
 <!--START_PLUGINS_APPLICATION-->
 	<!--LeadBolt-->
 	<meta-data android:name="LEADBOLT_PACKAGE" android:value="" />
+	<meta-data android:name="LEADBOLT_SECTION_ID" android:value="" />
 <!--END_PLUGINS_APPLICATION-->
 
