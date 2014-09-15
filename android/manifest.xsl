@@ -3,6 +3,8 @@
 
 	<xsl:param name="leadBoltPackage"></xsl:param>
 	<xsl:param name="leadBoltSectionId"></xsl:param>
+	<xsl:param name="leadBoltFireworksKey"></xsl:param>
+
 
 	<xsl:template match="meta-data[@android:name='LEADBOLT_PACKAGE']">
 		<meta-data android:name="LEADBOLT_PACKAGE" android:value="{$leadBoltPackage}"/>
@@ -12,6 +14,9 @@
 		<meta-data android:name="LEADBOLT_SECTION_ID" android:value="{$leadBoltSectionId}"/>
 	</xsl:template>
 
+	<xsl:template match="meta-data[@android:name='LEADBOLT_FIREWORKS_KEY']">
+		<meta-data android:name="LEADBOLT_FIREWORKS_KEY" android:value="{$leadBoltFireworksKey}"/>
+	</xsl:template>
 	<!--	<xsl:strip-space elements="*" />-->
 	<xsl:output indent="yes" />
 
