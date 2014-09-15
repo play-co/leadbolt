@@ -27,12 +27,17 @@ import com.tealeaf.event.*;
 
 import LEADBOLT_PACKAGE.AdController;
 import LEADBOLT_PACKAGE.AdListener;
+import com.appfireworks.android.listener.AppModuleListener;
+import com.appfireworks.android.track.AppTracker;
 
 public class LeadBoltPlugin implements IPlugin {
 	Context _ctx;
 
 	private AdController ad;
 	private Activity mActivity;
+	private static final  String TAG = "{LEADBOLT}";
+	String interstitialId = null, fireworksAPIKey = null;
+
 
 	public class LeadboltAdNotAvailable extends com.tealeaf.event.Event {
 
@@ -63,44 +68,24 @@ public class LeadBoltPlugin implements IPlugin {
 
 		@Override
 		public void onAdClicked() {
-			logger.log("{leadbolt-native} ad clicked");
+			logger.log(TAG, "ad clicked");
 		}
 
 		@Override
 		public void onAdClosed() {
-			logger.log("{leadbolt-native} ad closed");
+			logger.log( TAG, "ad closed");
 			EventQueue.pushEvent(new LeadboltAdDismissed());
 		}
 
 		@Override
-		public void onAdCompleted() {
-		}
-
-		@Override
 		public void onAdFailed() {
-			logger.log("{leadbolt-native} ad not available");
+			logger.log(TAG, "ad not available");
 			EventQueue.pushEvent(new LeadboltAdNotAvailable());
 		}
 
 		@Override
-		public void onAdProgress() {
-		}
-
-		@Override
-		public void onAdAlreadyCompleted() {
-		}
-
-		@Override
-		public void onAdPaused() {
-		}
-
-		@Override
-		public void onAdResumed() {
-		}
-
-		@Override
 		public void onAdCached() {
-			logger.log("{leadbolt-native} available");
+			logger.log(TAG, "available");
 			EventQueue.pushEvent(new LeadboltAdAvailable());
 		}
 	}
@@ -112,24 +97,46 @@ public class LeadBoltPlugin implements IPlugin {
 		_ctx = applicationContext;
 	}
 
+	public void initialize () {
+		if (interstitialId == null || fireworksAPIKey == null) {
+			logger.log(TAG, "Keys are null please verify", "interstitialId: ", interstitialId, "\t Fireworks Key", fireworksAPIKey);
+		} else {
+			AppTracker.startSession(mActivity, fireworksAPIKey, new AppModuleListener () {
+				@Override
+				public void onModuleLoaded() {}
+
+				@Override
+				public void onModuleFailed () {
+					ad = new AdController(mActivity, interstitialId, new PluginDelegate());
+				}
+
+				@Override
+				public void onModuleClosed () {}
+
+				@Override
+				public void onModuleCached() {}
+
+			});
+		}
+	}
+
 	public void onCreate(Activity activity, Bundle savedInstanceState) {
 		mActivity = activity;
 		String leadBoltPackage = "LEADBOLT_PACKAGE";
 		PackageManager manager = activity.getPackageManager();
-		String sectionId = "";
-
 		try {
 			Bundle meta = manager.getApplicationInfo(activity.getPackageName(), PackageManager.GET_META_DATA).metaData;
 			if (meta != null) {
-				sectionId = meta.get("LEADBOLT_SECTION_ID").toString();
+				interstitialId = meta.get("LEADBOLT_SECTION_ID").toString();
+				fireworksAPIKey = meta.get("LEADBOLT_FIREWORKS_KEY").toString();
+				if(savedInstanceState == null) {
+					initialize();
+				}
 			}
 		} catch (Exception e) {
-			android.util.Log.d("EXCEPTION", "" + e.getMessage());
+			logger.log(TAG, "ERROR");
+			e.printStackTrace();
 		}
-
-		logger.log("{leadbolt} Initializing LeadBolt ad framework with package:", leadBoltPackage, sectionId);
-
-		this.ad = new AdController(mActivity, sectionId, new PluginDelegate());
 	}
 
 	public void showInterstitial(String jsonData) {
@@ -146,19 +153,28 @@ public class LeadBoltPlugin implements IPlugin {
 	}
 
 	public void onResume() {
+		AppTracker.resume(_ctx);
 	}
 
 	public void onStart() {
 	}
 
 	public void onPause() {
+		if (!mActivity.isFinishing()) {
+			AppTracker.pause(_ctx);
+		}
 	}
 
 	public void onStop() {
 	}
 
 	public void onDestroy() {
-		this.ad.destroyAd();
+		if (mActivity.isFinishing()) {
+			AppTracker.closeSession(_ctx, true);
+		}
+		if (this.ad != null) {
+			this.ad.destroyAd();
+		}
 	}
 
 	public void onNewIntent(Intent intent) {
