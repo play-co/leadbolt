@@ -129,10 +129,9 @@ public class LeadBoltPlugin implements IPlugin {
 			if (meta != null) {
 				interstitialId = meta.get("LEADBOLT_SECTION_ID").toString();
 				fireworksAPIKey = meta.get("LEADBOLT_FIREWORKS_KEY").toString();
-
-					if(savedInstanceState == null) {
-						initialize();
-					}
+				if(savedInstanceState == null) {
+					initialize();
+				}
 			}
 		} catch (Exception e) {
 			logger.log(TAG, "ERROR");
