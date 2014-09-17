@@ -167,7 +167,6 @@ public class LeadBoltPlugin implements IPlugin {
 	}
 
 	public void cacheInterstitial(String jsonData) {
-		//this.ad.loadAdToCache();
 		this.caching = true;
 		AppTracker.loadModuleToCache(mActivity, "inapp");
 	}
