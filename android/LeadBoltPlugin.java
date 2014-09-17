@@ -37,6 +37,7 @@ public class LeadBoltPlugin implements IPlugin {
 	private Activity mActivity;
 	private static final  String TAG = "{LEADBOLT}";
 	String interstitialId = null, fireworksAPIKey = null;
+	boolean caching = true;
 
 
 	public class LeadboltAdNotAvailable extends com.tealeaf.event.Event {
@@ -101,20 +102,36 @@ public class LeadBoltPlugin implements IPlugin {
 		if (interstitialId == null || fireworksAPIKey == null) {
 			logger.log(TAG, "Keys are null please verify", "interstitialId: ", interstitialId, "\t Fireworks Key", fireworksAPIKey);
 		} else {
-			AppTracker.startSession(mActivity, fireworksAPIKey, new AppModuleListener () {
+			AppTracker.startSession(_ctx, fireworksAPIKey);
+			AppTracker.setModuleListener(new AppModuleListener () {
 				@Override
-				public void onModuleLoaded() {}
-
-				@Override
-				public void onModuleFailed () {
-					ad = new AdController(mActivity, interstitialId, new PluginDelegate());
+				public void onModuleLoaded() {
+					logger.log(TAG, "leadbolt directdeal available");
 				}
 
 				@Override
-				public void onModuleClosed () {}
+				public void onModuleFailed () {
+					logger.log(TAG, "leadbolt directdeal not available loading default ads");
+					logger.log(TAG, "Caching", caching);
+					ad = new AdController(mActivity, interstitialId, new PluginDelegate());
+					if (!caching) {
+						ad.loadAd();
+					} else {
+						ad.loadAdToCache();
+					}
+				}
 
 				@Override
-				public void onModuleCached() {}
+				public void onModuleClosed () {
+					logger.log( TAG, "directdeal closed");
+					EventQueue.pushEvent(new LeadboltAdDismissed());
+				}
+
+				@Override
+				public void onModuleCached() {
+					logger.log(TAG, "direct deal cached");
+					EventQueue.pushEvent(new LeadboltAdAvailable());
+				}
 
 			});
 		}
@@ -141,15 +158,18 @@ public class LeadBoltPlugin implements IPlugin {
 
 	public void showInterstitial(String jsonData) {
 		final AdController ad = this.ad;
+		this.caching = false;
 		mActivity.runOnUiThread(new Runnable() {
 			public void run() {
-				ad.loadAd();
+				AppTracker.loadModule(mActivity, "inapp");
 			}
 		});
 	}
 
 	public void cacheInterstitial(String jsonData) {
-		this.ad.loadAdToCache();
+		//this.ad.loadAdToCache();
+		this.caching = true;
+		AppTracker.loadModuleToCache(mActivity, "inapp");
 	}
 
 	public void onResume() {
