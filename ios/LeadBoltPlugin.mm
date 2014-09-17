@@ -17,6 +17,8 @@
 	}
 
 	self.myAdController = nil;
+	self.view = nil;
+	self.leadBoltSectionId = nil;
 
 	return self;
 }
@@ -24,37 +26,99 @@
 - (void) initializeWithManifest:(NSDictionary *)manifest appDelegate:(TeaLeafAppDelegate *)appDelegate {
 	@try {
 		NSDictionary *ios = [manifest valueForKey:@"ios"];
-		NSString *leadBoltSectionId = [ios valueForKey:@"leadBoltSectionId"];
+		self.leadBoltSectionId = [ios valueForKey:@"leadBoltSectionId"];
+		NSString *appFireworksKey = [ios valueForKey:@"leadBoltFireworksKey"];
+		self.view = appDelegate.tealeafViewController.view;
 
-		NSLog(@"{leadBolt} Initializing with manifest leadBoltSectionId: '%@'", leadBoltSectionId);
+		NSLOG(@"{leadBolt} Initializing with manifest leadBoltSectionId: '%@' and fireworksKey: '%@'",
+				self.leadBoltSectionId, appFireworksKey);
 
-		self.myAdController = [LeadboltOverlay createAdWithSectionid:leadBoltSectionId view:appDelegate.tealeafViewController.view];
-
-		/*
-		 Setting setLocationControl to 1, will enable you to get the GPS location
-		 of the user, but will pop-up a warning to the users and they can decline
-		 sending the data
-		 */
-		[self.myAdController setLocationControl:@"0"];
+		[[NSNotificationCenter defaultCenter] addObserver:self
+			selector:@selector(handleModuleFailed)
+			name:@"onModuleFailed" object:@"AppFireworksNotification"];
+		[[NSNotificationCenter defaultCenter] addObserver:self
+			selector:@selector(handleModuleCached)
+			name:@"onModuleCached" object:@"AppFireworksNotification"];
+		[[NSNotificationCenter defaultCenter] addObserver:self
+			selector:@selector(handleModuleClosed)
+			name:@"onModuleClosed" object:@"AppFireworksNotification"];
+		[AppTracker startSession:appFireworksKey];
 
 		if (appDelegate.gameSupportsLandscape) {
-			[self.myAdController setLandscapeMode:@"1"];
+			//[self.myAdController setLandscapeMode:@"1"];
+			[AppTracker setLandscapeMode:YES];
 		}
+
+		// For AdFailed: - called when LeadBolt Ad cannot be loaded
+		[[NSNotificationCenter defaultCenter] addObserver:self
+			selector:@selector(handleLBEvent:)
+			name:@"onAdFailed" object:nil];
+
+		// For AdClosed: - called when user closes the App Ad
+		[[NSNotificationCenter defaultCenter] addObserver:self
+			selector:@selector(handleLBEvent:)
+			name:@"onAdClosed" object:nil];
+
+		// For AdCached: - called once the Ad is successfully cached on the
+		// device after [ad loadAdToCache] has been called
+		[[NSNotificationCenter defaultCenter] addObserver:self
+			selector:@selector(handleLBEvent:)
+			name:@"onAdCached" object:nil];
 	}
 	@catch (NSException *exception) {
-		NSLog(@"{leadBolt} Failure to get ios:leadBoltSectionId from manifest file: %@", exception);
+		NSLOG(@"{leadBolt} Failure to get ios:leadBoltSectionId from manifest file: %@", exception);
 	}
+}
+
+-(void)handleModuleFailed {
+	NSLOG(@"{leadBolt} Module load failed");
+	self.myAdController = [LeadboltOverlay createAdWithSectionid:self.leadBoltSectionId
+		view:self.view];
+	[self.myAdController loadAdToCache];
+}
+
+-(void)handleModuleCached {
+	NSLOG(@"{leadBolt} module cached");
+	[self sendToJS:@"LeadboltAdAvailable"];
+}
+
+-(void)handleModuleClosed {
+	NSLOG(@"{leadBolt} module closed");
+	[self sendToJS:@"LeadboltAdDismissed"];
+}
+
+- (void) cacheInterstitial:(NSDictionary *)jsonObject {
+	[AppTracker loadModuleToCache:@"inapp" view:self.view];
 }
 
 - (void) showInterstitial:(NSDictionary *)jsonObject {
-	@try {
-		NSLOG(@"{leadBolt} Showing interstitial");
-
+	NSLOG(@"{leadBolt} Showing interstitial");
+	if(self.myAdController) {
 		[self.myAdController loadAd];
-	}
-	@catch (NSException *exception) {
-		NSLOG(@"{leadBolt} Exception while processing event: ", exception);
+		self.myAdController = nil;
+	} else {
+		[AppTracker loadModule:@"inapp" view:self.view];
 	}
 }
 
+-(void)handleLBEvent:(NSNotification *)notif {
+	if([notif.name isEqualToString:@"onAdFailed"]) {
+		NSLOG(@"{leadBolt} ad failed");
+		[self sendToJS:@"LeadboltAdNotAvailable"];
+	}
+	else if([notif.name isEqualToString:@"onAdClosed"]) {
+		NSLOG(@"{leadBolt} ad closed");
+		[self sendToJS:@"LeadboltAdDismissed"];
+	}
+	else if([notif.name isEqualToString:@"onAdCached"]) {
+		NSLOG(@"{leadBolt} ad cached");
+		[self sendToJS:@"LeadboltAdAvailable"];
+	}
+}
+
+-(void) sendToJS:(NSString *)event {
+	[[PluginManager get] dispatchJSEvent:[NSDictionary dictionaryWithObjectsAndKeys:
+		event, @"name",
+		nil]];
+}
 @end

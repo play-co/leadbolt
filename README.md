@@ -1,12 +1,16 @@
 # Game Closure DevKit Plugin: LeadBolt
 
 This plugin adds support for [LeadBolt](http://www.leadbolt.com/) interstitial advertising on Android and iOS platforms.
+This first uses Leadbolt Connect for direct deals and later falls back to the regular interstitials. It uses AppFireworks for Leadbolt connect.
 
 ## Usage
 
-Create a publisher account with LeadBolt and create a new application.  Download the SDK JAR file and rename it to `leadbolt.jar` and put it in your game's root folder next to your `manifest.json` file.
+Create a publisher account with LeadBolt and create a new application.
 
-Install the plugin with `basil install leadbolt`.
+### Android only:
+Download the SDK JAR file and rename it to `leadbolt.jar` and put it in your game's root folder next to your `manifest.json` file.
+
+Install the plugin by forking it in the addons directory.
 
 Include the plugin in the `manifest.json` file under the "addons" section for your game:
 
@@ -30,7 +34,8 @@ JAR download link.
 			"96": "resources/images/promo/icon96.png"
 		},
 		"leadBoltPackage": "com.qcbcfhovhver",
-		"leadBoltSectionId": "227037220"
+		"leadBoltSectionId": "227037220",
+		"appFireworksKey": "thekeyfromthewebsite"
 	},
 ~~~
 
@@ -45,7 +50,8 @@ JAR download link.
 			"114": "resources/images/promo/icon114.png",
 			"144": "resources/images/promo/icon144.png"
 		},
-		"leadBoltSectionId": "227037220"
+		"leadBoltSectionId": "227037220",
+		"appFireworksKey": "thekeyfromthewebsite"
 	},
 ~~~
 
@@ -57,8 +63,37 @@ Then you can edit your game JavaScript code to import the LeadBolt object:
 import plugins.leadbolt.leadBolt as leadBolt;
 ~~~
 
+Pre-load an interstitial with:
+
+~~~
+leadBolt.cacheInterstitial();
+~~~
+
 And use the `showInterstitial` method to show an ad:
 
 ~~~
 leadBolt.showInterstitial();
+~~~
+
+Provides the following callbacks `leadBolt.onAdAvailable`, `leadBolt.onAdDismissed` and `leadBolt.onAdNotAvailable`
+to know if the ad was cached, whether the ad was closed, or ad not available respectively.
+
+Eg:
+
+~~~
+leadBolt.onAdAvailable = function {
+	//ad available and cached
+};
+~~~
+
+~~~
+leadBolt.onAdNotAvailable = function {
+	//ad not available
+};
+~~~
+
+~~~
+leadBolt.onAdDismissed = function {
+	//ad closed, do next steps
+};
 ~~~

@@ -1,15 +1,20 @@
 {
 	"code": [
-		"LeadBoltOverlay.h",
+		"sdk/LeadBoltOverlay.h",
 		"LeadBoltPlugin.h",
 		"LeadBoltPlugin.mm"
 	],
 	"frameworks": [
-		"AdSupport",
-		"CoreLocation",
-		"CoreTelephony",
 		"AudioToolbox",
 		"AVFoundation",
-		"libLeadboltOverlay.a"
+		"AdSupport",
+		"SystemConfiguration",
+		"CoreMotion",
+		"StoreKit",
+		"sdk/libLeadboltOverlay.a",
+		"sdk/AppFireworks/libAppTracker.a"
+	],
+	"linkerFlags": [
+		"-ObjC"
 	]
 }
