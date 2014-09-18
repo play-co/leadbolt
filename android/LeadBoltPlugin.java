@@ -106,7 +106,7 @@ public class LeadBoltPlugin implements IPlugin {
 			AppTracker.setModuleListener(new AppModuleListener () {
 				@Override
 				public void onModuleLoaded() {
-					logger.log(TAG, "leadbolt directdeal available");
+					logger.log(TAG, "leadbolt directdeal ad shown");
 				}
 
 				@Override
