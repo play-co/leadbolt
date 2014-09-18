@@ -1,14 +1,12 @@
 {
-	"copyGameFiles": [
-		"leadbolt.jar"
-	],
 	"copyFiles": [
 		"LeadBoltPlugin.java"
 	],
 	"libraries": [
 	],
 	"jars": [
-		"leadbolt.jar"
+		"leadbolt.jar",
+		"AppFireworks.jar"
 	],
 	"injectionXML": "manifest.xml",
 	"injectionXSL": "manifest.xsl",
