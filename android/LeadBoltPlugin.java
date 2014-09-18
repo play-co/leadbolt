@@ -37,6 +37,7 @@ public class LeadBoltPlugin implements IPlugin {
 	private Activity mActivity;
 	private static final  String TAG = "{LEADBOLT}";
 	String interstitialId = null, fireworksAPIKey = null;
+	boolean adAvailable = false;
 
 
 	public class LeadboltAdNotAvailable extends com.tealeaf.event.Event {
@@ -73,19 +74,19 @@ public class LeadBoltPlugin implements IPlugin {
 
 		@Override
 		public void onAdClosed() {
-			logger.log( TAG, "ad closed");
+			logger.log( TAG, "default ad close");
 			EventQueue.pushEvent(new LeadboltAdDismissed());
 		}
 
 		@Override
 		public void onAdFailed() {
-			logger.log(TAG, "ad not available");
+			logger.log(TAG, "default ad not available");
 			EventQueue.pushEvent(new LeadboltAdNotAvailable());
 		}
 
 		@Override
 		public void onAdCached() {
-			logger.log(TAG, "available");
+			logger.log(TAG, "default ad cached");
 			EventQueue.pushEvent(new LeadboltAdAvailable());
 		}
 	}
@@ -101,20 +102,34 @@ public class LeadBoltPlugin implements IPlugin {
 		if (interstitialId == null || fireworksAPIKey == null) {
 			logger.log(TAG, "Keys are null please verify", "interstitialId: ", interstitialId, "\t Fireworks Key", fireworksAPIKey);
 		} else {
-			AppTracker.startSession(mActivity, fireworksAPIKey, new AppModuleListener () {
+			AppTracker.startSession(_ctx, fireworksAPIKey);
+			AppTracker.setModuleListener(new AppModuleListener () {
 				@Override
-				public void onModuleLoaded() {}
-
-				@Override
-				public void onModuleFailed () {
-					ad = new AdController(mActivity, interstitialId, new PluginDelegate());
+				public void onModuleLoaded() {
+					logger.log(TAG, "leadbolt directdeal ad shown");
 				}
 
 				@Override
-				public void onModuleClosed () {}
+				public void onModuleFailed () {
+					logger.log(TAG, "leadbolt directdeal not available caching default ads");
+					ad = new AdController(mActivity, interstitialId, new PluginDelegate());
+					adAvailable = false;
+					ad.loadAdToCache();
+				}
 
 				@Override
-				public void onModuleCached() {}
+				public void onModuleClosed () {
+					logger.log( TAG, "directdeal closed");
+					adAvailable = false;
+					EventQueue.pushEvent(new LeadboltAdDismissed());
+				}
+
+				@Override
+				public void onModuleCached() {
+					logger.log(TAG, "direct deal cached");
+					adAvailable = true;
+					EventQueue.pushEvent(new LeadboltAdAvailable());
+				}
 
 			});
 		}
@@ -143,13 +158,17 @@ public class LeadBoltPlugin implements IPlugin {
 		final AdController ad = this.ad;
 		mActivity.runOnUiThread(new Runnable() {
 			public void run() {
-				ad.loadAd();
+				if (adAvailable) {
+					AppTracker.loadModule(mActivity, "inapp");
+				} else {
+					ad.loadAd();
+				}
 			}
 		});
 	}
 
 	public void cacheInterstitial(String jsonData) {
-		this.ad.loadAdToCache();
+		AppTracker.loadModuleToCache(mActivity, "inapp");
 	}
 
 	public void onResume() {
