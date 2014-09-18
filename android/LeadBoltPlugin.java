@@ -113,7 +113,7 @@ public class LeadBoltPlugin implements IPlugin {
 				public void onModuleFailed () {
 					logger.log(TAG, "leadbolt directdeal not available caching default ads");
 					ad = new AdController(mActivity, interstitialId, new PluginDelegate());
-					adAvailable =false;
+					adAvailable = false;
 					ad.loadAdToCache();
 				}
 
